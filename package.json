@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://ryannkim327.github.io/Chinatgpt",
+  "homepage": "https://ryannkim327.github.io/_",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
