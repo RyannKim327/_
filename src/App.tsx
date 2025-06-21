@@ -2,18 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Message } from "./types";
 import { marked } from "marked";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 function Chat(message: Message) {
-  const renderMD = (content: string) => {
-    try {
-      const html = markdown(content);
-      return typeof html === "string" ? html : "";
-    } catch (e) {
-      console.log(e);
-      return content || "";
-    }
-  };
-
   return (
     <div
       className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
@@ -37,17 +29,37 @@ function App() {
       content: "Hello user",
     },
   ]);
+  const [sent, setSent] = useState(false);
 
   const send = async () => {
+    if (/\/clear/i.test(chat.trim())) {
+      localStorage.setItem(
+        "messages",
+        JSON.stringify([
+          {
+            role: "system",
+            content: "All messages are cleared.",
+          },
+        ]),
+      );
+      setChat("");
+      return;
+    }
+    setSent(true);
+
+    const list = [
+      ...messages,
+      {
+        role: "user",
+        content: chat,
+      },
+    ];
+    setChat("");
+
     const { data } = await axios.post(
       `https://imissyougpt.onrender.com/api/chat/`,
       {
-        messages: [
-          {
-            role: "user",
-            content: chat,
-          },
-        ],
+        messages: list,
       },
       {
         headers: {
@@ -55,59 +67,61 @@ function App() {
         },
       },
     );
-    setChat("");
-    const list = messages;
-    list.push({
-      role: "user",
-      content: chat,
-    });
-    list.push({
-      role: "system",
-      content: data.response,
-    });
-    localStorage.setItem("messages", JSON.stringify(list));
+    const updated = [
+      ...list,
+      {
+        role: "system",
+        content: data.response,
+      },
+    ];
+
+    localStorage.setItem("messages", JSON.stringify(updated));
+    setSent(false);
   };
 
   useEffect(() => {
+    const saved = localStorage.getItem("messages");
     setMessages(
-      JSON.parse(
-        localStorage.getItem("messages") ??
-        JSON.stringify([
-          {
-            role: "system",
-            content: "Hello user",
-          },
-        ]),
-      ),
+      saved
+        ? JSON.parse(saved)
+        : [
+            {
+              role: "system",
+              content: "Hello user",
+            },
+          ],
     );
-  }, [localStorage.getItem("messages")]);
+  }, [localStorage.getItem("messages"), sent]);
 
   return (
-    <div className="bg-slate-900 text-white h-dvh w-dvw">
-      <div className="flex flex-col h-full w-full">
+    <div className="bg-slate-900 text-white h-dvh w-dvw p-4">
+      <div className="flex flex-col h-full w-full gap-1">
         <div className="flex flex-col justify-center items-center">
-          <h1>Welcome to my simple ChatBot</h1>
-          <h3>No need to sign in, just use</h3>
+          <h1>ChinatGPT</h1>
         </div>
-        <div className="flex flex-col bg-slate-500/25 gap-2 h-full w-full box-border p-4 overflow-y-scroll">
+        <div className="flex flex-col bg-slate-500/25 gap-2 h-full w-full box-border overflow-y-scroll p-2 rounded-t-md">
           {messages.map((m) => {
             return Chat(m);
           })}
         </div>
-        <div className="flex w-full">
-          <input
-            className="w-full box-border outline-none"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        <div className="flex w-full p-2 items-end box-border bg-slate-700/25 px-4 rounded-b-md">
+          <textarea
+            autoFocus={true}
+            disabled={sent}
+            className="w-full box-border outline-none resize-none leading-[1.5rem] max-h-[calc(1.5rem*5)]"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setChat(e.target.value);
             }}
             value={chat}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
                 send();
               }
             }}
             placeholder="Enter your message here:"
-          />
+          ></textarea>
+          <FontAwesomeIcon onClick={send} icon={faPaperPlane} />
         </div>
       </div>
     </div>
