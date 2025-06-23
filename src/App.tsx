@@ -80,6 +80,22 @@ function App() {
   };
 
   useEffect(() => {
+    const a = () => {
+      const selection = window.getSelection()?.toString();
+      if (selection) {
+        setChat(selection);
+        send();
+      }
+    };
+
+    document.addEventListener("mouseup", a);
+
+    return () => {
+      document.removeEventListener("mouseup", a);
+    };
+  }, []);
+
+  useEffect(() => {
     const saved = localStorage.getItem("messages");
     setMessages(
       saved
@@ -119,7 +135,7 @@ function App() {
                 send();
               }
             }}
-            placeholder="Enter your message here:"
+            placeholder={sent ? "Typing reply" : "Enter your message here:"}
           ></textarea>
           <FontAwesomeIcon onClick={send} icon={faPaperPlane} />
         </div>
