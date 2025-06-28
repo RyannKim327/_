@@ -96,6 +96,16 @@ function App() {
             },
           ],
     );
+    const chats = document.getElementById("chats");
+    if (chats) {
+      setTimeout(() => {
+        chats.scrollTo({
+          behavior: "smooth",
+          top: chats.scrollHeight,
+          left: 0,
+        });
+      }, 100);
+    }
   }, [localStorage.getItem("messages"), sent]);
 
   return (
@@ -104,7 +114,10 @@ function App() {
         <div className="flex flex-col justify-center items-center">
           <h1>ChinatGPT</h1>
         </div>
-        <div className="flex flex-col bg-slate-700/25 gap-2 h-full w-full box-border overflow-y-scroll p-2 rounded-t-md">
+        <div
+          id="chats"
+          className="flex flex-col bg-slate-700/25 gap-2 h-full w-full box-border overflow-y-scroll p-2 rounded-t-md"
+        >
           {messages.map((m) => {
             return Chat(m);
           })}
