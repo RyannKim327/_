@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+pre {
+  background-color: #0f172b;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  overflow-x: auto;
+  user-select: text;
+  font-family: "Courier New", Courier, monospace;
+
+  > code {
+    background-color: transparent;
+    color: white;
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+}
+
+code {
+  background-color: #0f172b;
+  color: #dedede;
+  padding: 0 0.25rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}

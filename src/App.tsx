@@ -1,25 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Message } from "./types";
-import { marked } from "marked";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-
-function Chat(message: Message) {
-  return (
-    <div
-      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-    >
-      <div className="bg-slate-500 p-1 px-2 rounded max-w-3/4 overflow-x-auto">
-        <p
-          dangerouslySetInnerHTML={{
-            __html: marked(message.content),
-          }}
-        ></p>
-      </div>
-    </div>
-  );
-}
+import Chat from "./component/chat";
 
 function App() {
   const [chat, setChat] = useState("");
@@ -32,6 +16,9 @@ function App() {
   const [sent, setSent] = useState(false);
 
   const send = async () => {
+    if (sent || !chat.trim()) {
+      return;
+    }
     if (/\/clear/i.test(chat.trim())) {
       localStorage.setItem(
         "messages",
@@ -56,6 +43,8 @@ function App() {
     ];
     setChat("");
 
+    localStorage.setItem("messages", JSON.stringify(list));
+
     const { data } = await axios.post(
       `https://imissyougpt.onrender.com/api/chat/`,
       {
@@ -79,21 +68,21 @@ function App() {
     setSent(false);
   };
 
-  useEffect(() => {
-    const a = () => {
-      const selection = window.getSelection()?.toString();
-      if (selection) {
-        setChat(selection);
-        send();
-      }
-    };
-
-    document.addEventListener("mouseup", a);
-
-    return () => {
-      document.removeEventListener("mouseup", a);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const a = () => {
+  //     const selection = window.getSelection()?.toString();
+  //     if (selection) {
+  //       setChat(selection);
+  //       send();
+  //     }
+  //   };
+  //
+  //   document.addEventListener("mouseup", a);
+  //
+  //   return () => {
+  //     document.removeEventListener("mouseup", a);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("messages");
@@ -110,20 +99,19 @@ function App() {
   }, [localStorage.getItem("messages"), sent]);
 
   return (
-    <div className="bg-slate-900 text-white h-dvh w-dvw p-4">
+    <div className="bg-slate-900 text-white h-dvh w-dvw p-4 select-none">
       <div className="flex flex-col h-full w-full gap-1">
         <div className="flex flex-col justify-center items-center">
           <h1>ChinatGPT</h1>
         </div>
-        <div className="flex flex-col bg-slate-500/25 gap-2 h-full w-full box-border overflow-y-scroll p-2 rounded-t-md">
+        <div className="flex flex-col bg-slate-700/25 gap-2 h-full w-full box-border overflow-y-scroll p-2 rounded-t-md">
           {messages.map((m) => {
             return Chat(m);
           })}
         </div>
-        <div className="flex w-full p-2 items-end box-border bg-slate-700/25 px-4 rounded-b-md">
+        <div className="flex w-full p-2 items-end box-border bg-slate-800/25 px-4 rounded-b-md">
           <textarea
             autoFocus={true}
-            disabled={sent}
             className="w-full box-border outline-none resize-none leading-[1.5rem] max-h-[calc(1.5rem*5)]"
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setChat(e.target.value);
