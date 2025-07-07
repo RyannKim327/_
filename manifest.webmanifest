@@ -1,1 +1,1 @@
-{"name":"ChinatGPT","short_name":"GPT","description":"My simple ChatGPT UI","start_url":"/_/","display":"standalone","background_color":"#ffffff","theme_color":"#333333","lang":"en","scope":"/_/","icons":[{"src":"./src/assets/react.svg","sizes":"192x192","type":"image/svg"}]}
+{"name":"ChinatGPT","short_name":"GPT","description":"My simple ChatGPT UI","start_url":"_","display":"standalone","background_color":"#ffffff","theme_color":"#333333","lang":"en","scope":"/_/","icons":[{"src":"./src/assets/react.svg","sizes":"192x192","type":"image/svg"}]}
