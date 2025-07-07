@@ -9,14 +9,15 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+
     VitePWA({
-      registerType: "autoUpdate",
-      includeAssets: ["favicons.svg", "robots.txt"],
       manifest: {
         name: "ChinatGPT",
         short_name: "GPT",
         description: "My simple ChatGPT UI",
         theme_color: "#333333",
+        start_url: '_',
+        display: 'standalone',
         icons: [
           {
             src: "./src/assets/react.svg",
